@@ -5,8 +5,17 @@ import TimeLine from '@/components/TimeLine.vue'
 </script>
 
 <template>
-	<div>
+	<!-- Section -->
+	<div class="section">
+	
+	</div>
+		
+		<!-- Container -->
+	<div class="container">
+		<!-- timeline-component	-->
 		<TimeLine />
 	</div>
+	
 </template>
+
 
