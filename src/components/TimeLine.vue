@@ -1,57 +1,77 @@
 <!-- @TimeLine -->
-<script lang="ts" setup>
-//import { PropType } from "vue"
+<script setup lang="ts">
+import TimeLineItem from '@/components/TimeLineItem.vue';
+import {
+    IPost,
+    thisMonth,
+    thisWeek,
+    TimeLinePostType,
+    today,
+} from '@/dummy_data/post';
+import { DateTime } from 'luxon';
+import { computed, ref } from 'vue';
 
-// const props = withDefaults(defineProps<Props>(), {  })
+// as const: makes the array read only
+const periods: readonly [string, string, string] = [
+    'Today',
+    'This Week',
+    'This Month',
+] as const;
 
-// since Vue 3.2.20 and its propsDestructureTransform option, we
-// can destructure and give a default value to a prop directly:
-// const { ponyModel, isRunning = false } = defineProps<Props>()
+type PeriodType = typeof periods[number];
 
-//interface Props {
-//	ITimeLineProps: any
-//}
-//
-//const props = defineProps({
-//	TimeLineProp: {
-//		type: Object as PropType<Props>,
-//		required: true
-//	},
-//})
+const selectedPeriod = ref<PeriodType>('Today');
 
-// setup
+// everytime our selectedPeriod changes, computed will cause a re-render
+const postList = computed<Array<TimeLinePostType>>(() =>
+    [today, thisWeek, thisMonth]
+        .map((post) => ({
+            ...post,
+            created: DateTime.fromISO(post.created),
+        }))
+        .filter((post) => {
+            switch (selectedPeriod.value) {
+                case 'Today':
+                    return (
+                        post.created >=
+                        DateTime.now().minus({ day: 1 })
+                    );
+                case 'This Week':
+                    return (
+                        post.created >=
+                        DateTime.now().minus({ week: 1 })
+                    );
+            }
 
+            return post;
+        }),
+);
 
+const selectPeriod = (period: PeriodType) => {
+    selectedPeriod.value = period;
+};
 </script>
-<!-- ⚫️⚫️☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰ -->
 
 <template>
-  <div class="TimeLineContainer">
-    <h1>
-      <span>------------------------------</span>
-      @TimeLineComponent
-      <span>------------------------------</span>
-    </h1>
-  </div>
-</template>
-<!-- ⚫️⚫️☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰ -->
+    <nav class="is-primary panel">
+        <span class="panel-tabs">
+            <a
+                v-for="period of periods"
+                :key="period"
+                :class="{ 'is-active': period === selectedPeriod }"
+                @click="selectPeriod(period)"
+            >
+                {{ period }}
+            </a>
+        </span>
 
-<style lang="scss">
-.TimeLineContainer {
-	background-color: #2f323a;
-	margin-top: 5rem;
-	padding: 0;
-	width: 100%;
-	border-radius: 15px;
-	// ⚫️⚫️☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰
-	h1 {
-		padding: 55px;
-		font-family: Liberation Mono for Powerline, sans-serif;
-		color: mediumpurple;
-		font-size: 2.2rem;
-		display: grid;
-		place-items: center;
-	}
-}
-</style>
-<!-- ⚫️⚫️☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰ -->
+        <!-- LIST OF POST -->
+        <TimeLineItem
+            v-for="post of postList"
+            :key="post.id"
+            :post="post"
+        />
+    </nav>
+</template>
+
+<style scoped></style>
