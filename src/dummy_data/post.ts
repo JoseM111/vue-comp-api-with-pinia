@@ -7,6 +7,11 @@ export interface IPost {
     created: string;
 }
 
+// extending post
+export type TimeLinePostType = Omit<IPost, 'created'> & {
+    created: DateTime;
+}
+
 // dummy data
 export const today: IPost = {
     id: '1',
