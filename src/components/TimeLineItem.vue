@@ -3,13 +3,17 @@
 import { TimeLinePostType } from '@/dummy_data/post';
 
 defineProps<{
-    post: TimeLinePostType;
+  post: TimeLinePostType;
 }>();
+
+const itemsStyle = `panel-block is-flex
+   is-flex-direction-column
+    is-align-items-flex-start`;
 </script>
 
 <template>
-    <a class="panel-block is-flex is-flex-direction-column is-align-items-flex-start">
-        <a>{{ post.title }}</a>
-        <a>{{ post.created.toFormat('d MMM') }}</a>
-    </a>
+  <a :class="itemsStyle">
+    <a>{{ post.title }}</a>
+    <a>{{ post.created.toFormat('d MMM') }}</a>
+  </a>
 </template>

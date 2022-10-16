@@ -11,7 +11,7 @@ import { usePostStore } from '@/stores/postStore';
 import { DateTime } from 'luxon';
 import { computed, ref } from 'vue';
 
-const composablePostStore = usePostStore();
+const postStore = usePostStore();
 // as const: makes the array read only
 const periods: readonly [string, string, string] = [
   'Today',
@@ -48,8 +48,8 @@ const selectPeriod = (period: PeriodType) => {
 </script>
 
 <template>
-  {{ composablePostStore.foo }}
-  <button @click="composablePostStore.updateFoo('bar')">
+  {{ postStore.foo }}
+  <button @click="postStore.updateFoo('bar')">
     Button
   </button>
 
