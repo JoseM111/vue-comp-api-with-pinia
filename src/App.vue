@@ -1,16 +1,37 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import TimeLine from '@/components/TimeLine.vue';
 </script>
 
 <template>
-    <!-- SECTION -->
-    <div class="section"></div>
+  <!-- SECTION -->
+  <div class="section"></div>
 
-    <!-- CONTAINER -->
-    <div class="container">
+  <!-- CONTAINER -->
+  <div class="container">
+    <Suspense>
+      <!-- default -->
+      <template #default>
         <!-- timeline-component	-->
         <TimeLine />
-    </div>
+      </template>
+
+      <!-- fallback -->
+      <template #fallback>
+        <div>
+          <span class="suspense">Loading...</span>
+          <progress class="progress is-primary is-small" max="100" />
+        </div>
+      </template>
+    </Suspense>
+  </div>
 </template>
+
+<style lang="scss">
+span.suspense {
+  font-size: 3.5rem;
+  color: dodgerblue;
+  display: block;
+  text-align: center;
+  margin-top: 23rem;
+}
+</style>
