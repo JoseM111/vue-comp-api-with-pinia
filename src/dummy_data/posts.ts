@@ -1,4 +1,4 @@
-// post.ts
+// posts.ts
 import { DateTime } from 'luxon';
 
 export interface IPost {

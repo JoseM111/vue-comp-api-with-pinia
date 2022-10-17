@@ -5,7 +5,7 @@ import {
   thisWeek,
   TimeLinePostType,
   today,
-} from '@/dummy_data/post';
+} from '@/dummy_data/posts';
 import { PeriodType } from '@/stores/constants';
 import { DateTime } from 'luxon';
 import { defineStore } from 'pinia';
@@ -16,21 +16,47 @@ interface IPostState {
   selectedPeriod: PeriodType;
 }
 
+// utility function that simulates a server with some latency
+function delaySimulation() {
+  return new Promise<void>((res) => (
+    setTimeout(res, 1500)
+  ));
+}
+
 export const usePostStore = defineStore('posts', {
   // state
   state: (): IPostState => ({
-    ids: [today.id, thisWeek.id, thisMonth.id],
-    all: new Map<string, IPost>([
-      [today.id, today],
-      [thisWeek.id, thisWeek],
-      [thisMonth.id, thisMonth],
-    ]),
+    ids: [],
+    all: new Map<string, IPost>(),
     selectedPeriod: 'Today',
   }),
   // actions: to update the state
   actions: {
     setSelectedPeriod(period: PeriodType) {
       this.selectedPeriod = period;
+    },
+    async fetchPosts() {
+      // fetching data
+      const RESPONSE_URL = 'http://localhost:8000/posts';
+      const response = await window.fetch(RESPONSE_URL);
+      
+      // casting `as Array<IPost>` for type safety
+      const data = (await response.json()) as Array<IPost>;
+      // simulating a delay
+      await delaySimulation();
+      
+      // processing our data
+      let ids: Array<string> = [];
+      let all: Map<string, IPost> = new Map();
+
+      data.forEach((post: IPost) => {
+        ids.push(post.id);
+        all.set(post.id, post);
+      });
+
+      // mutations and updating
+      this.ids = ids;
+      this.all = all;
     },
   },
   // works similarly to a computed property.

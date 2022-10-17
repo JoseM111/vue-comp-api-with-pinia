@@ -1,6 +1,6 @@
 <!-- @TimeLineItem -->
 <script lang="ts" setup>
-import { TimeLinePostType } from '@/dummy_data/post';
+import { TimeLinePostType } from '@/dummy_data/posts';
 
 defineProps<{
   post: TimeLinePostType;
