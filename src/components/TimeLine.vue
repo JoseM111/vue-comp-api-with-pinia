@@ -6,7 +6,8 @@ import { usePostStore } from '@/stores/postStore';
 
 const postStore = usePostStore();
 
-postStore.fetchPosts();
+// use await only if your using suspense
+await postStore.fetchPosts();
 </script>
 
 <template>

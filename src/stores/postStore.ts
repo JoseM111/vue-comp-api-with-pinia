@@ -37,8 +37,8 @@ export const usePostStore = defineStore('posts', {
     },
     async fetchPosts() {
       // fetching data
-      const RESPONSE_URL = 'http://localhost:8000/posts';
-      const response = await window.fetch(RESPONSE_URL);
+      const RESPONSE_URL: string = 'http://localhost:8000/posts';
+      const response: Response = await window.fetch(RESPONSE_URL);
       
       // casting `as Array<IPost>` for type safety
       const data = (await response.json()) as Array<IPost>;
