@@ -24,12 +24,20 @@ type PeriodType = typeof periods[number];
 const selectedPeriod = ref<PeriodType>('Today');
 
 // everytime our selectedPeriod changes, computed will cause a re-render
-const postList = computed<Array<TimeLinePostType>>(() =>
-  [today, thisWeek, thisMonth]
-    .map((post) => ({
-      ...post,
-      created: DateTime.fromISO(post.created),
-    }))
+const postList = computed<Array<TimeLinePostType>>(() => {
+  return postStore.ids
+    .map((id) => {
+      const post = postStore.all.get(id);
+
+      if (post) {
+        return {
+          ...post,
+          created: DateTime.fromISO(post.created),
+        };
+      }
+
+      throw Error(`Post with id ${id} not found`);
+    })
     .filter((post) => {
       switch (selectedPeriod.value) {
         case 'Today':
@@ -39,8 +47,8 @@ const postList = computed<Array<TimeLinePostType>>(() =>
       }
 
       return post;
-    }),
-);
+    });
+});
 
 const selectPeriod = (period: PeriodType) => {
   selectedPeriod.value = period;
@@ -48,11 +56,6 @@ const selectPeriod = (period: PeriodType) => {
 </script>
 
 <template>
-  {{ postStore.foo }}
-  <button @click="postStore.updateFoo('bar')">
-    Button
-  </button>
-
   <nav class="is-primary panel">
     <span class="panel-tabs">
       <a
