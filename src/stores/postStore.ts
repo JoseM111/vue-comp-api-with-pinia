@@ -1,11 +1,5 @@
-// state.ts
-import {
-  IPost,
-  thisMonth,
-  thisWeek,
-  TimeLinePostType,
-  today,
-} from '@/dummy_data/posts';
+// postStore.ts
+import { IPost, TimeLinePostType } from '@/dummy_data/posts';
 import { PeriodType } from '@/stores/constants';
 import { DateTime } from 'luxon';
 import { defineStore } from 'pinia';
@@ -18,9 +12,7 @@ interface IPostState {
 
 // utility function that simulates a server with some latency
 function delaySimulation() {
-  return new Promise<void>((res) => (
-    setTimeout(res, 1500)
-  ));
+  return new Promise<void>((res) => setTimeout(res, 1500));
 }
 
 export const usePostStore = defineStore('posts', {
@@ -39,12 +31,12 @@ export const usePostStore = defineStore('posts', {
       // fetching data
       const RESPONSE_URL: string = 'http://localhost:8000/posts';
       const response: Response = await window.fetch(RESPONSE_URL);
-      
+
       // casting `as Array<IPost>` for type safety
       const data = (await response.json()) as Array<IPost>;
       // simulating a delay
       await delaySimulation();
-      
+
       // processing our data
       let ids: Array<string> = [];
       let all: Map<string, IPost> = new Map();
