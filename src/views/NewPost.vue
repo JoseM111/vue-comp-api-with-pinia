@@ -9,6 +9,7 @@ const newPost: TimeLinePostType = {
   id: '-1',
   title: 'Title',
   created: DateTime.now(),
+  markdown: '## Title',
 };
 </script>
 
