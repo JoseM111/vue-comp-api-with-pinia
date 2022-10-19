@@ -1,3 +1,4 @@
+import { router } from '@/routes/router';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import './style.css';
@@ -7,4 +8,5 @@ const app = createApp(App);
 const pinia = createPinia();
 
 app.use(pinia);
+app.use(router);
 app.mount('#app');

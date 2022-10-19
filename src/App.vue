@@ -1,37 +1,34 @@
-<script setup lang="ts">
-import TimeLine from '@/components/TimeLine.vue';
+<script lang="ts" setup>
+import Navbar from '@/components/Navbar.vue';
 </script>
 
 <template>
   <!-- SECTION -->
-  <div class="section"></div>
+  <div class="section">
+    <!-- CONTAINER -->
+    <div class="container">
+      <!-- navbar -->
+      <Navbar />
 
-  <!-- CONTAINER -->
-  <div class="container">
-    <Suspense>
-      <!-- default -->
-      <template #default>
-        <!-- timeline-component	-->
-        <TimeLine />
-      </template>
-
-      <!-- fallback -->
-      <template #fallback>
-        <div>
-          <span class="suspense">Loading...</span>
-          <progress class="progress is-primary is-small" max="100" />
-        </div>
-      </template>
-    </Suspense>
+      <!-- router-view -->
+      <RouterView />
+    </div>´
   </div>
 </template>
 
-<style lang="scss">
-span.suspense {
-  font-size: 3.5rem;
-  color: dodgerblue;
-  display: block;
-  text-align: center;
-  margin-top: 23rem;
+<style>
+@import "highlight.js/styles/atom-one-dark.css";
+
+ul {
+  list-style: revert !important;
+  margin: 10px 0 !important;
+}
+
+pre {
+  margin: 10px 0 !important;
+}
+
+p {
+  margin: 10px 0 !important;
 }
 </style>

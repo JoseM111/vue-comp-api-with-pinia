@@ -1,11 +1,5 @@
-// state.ts
-import {
-  IPost,
-  thisMonth,
-  thisWeek,
-  TimeLinePostType,
-  today,
-} from '@/dummy_data/posts';
+// postStore.ts
+import { IPost, TimeLinePostType } from '@/dummy_data/posts';
 import { PeriodType } from '@/stores/constants';
 import { DateTime } from 'luxon';
 import { defineStore } from 'pinia';
@@ -18,9 +12,7 @@ interface IPostState {
 
 // utility function that simulates a server with some latency
 function delaySimulation() {
-  return new Promise<void>((res) => (
-    setTimeout(res, 1500)
-  ));
+  return new Promise<void>((res) => setTimeout(res, 1500));
 }
 
 export const usePostStore = defineStore('posts', {
@@ -32,19 +24,26 @@ export const usePostStore = defineStore('posts', {
   }),
   // actions: to update the state
   actions: {
-    setSelectedPeriod(period: PeriodType) {
+    /**
+     * @fetchPosts
+     * @param period
+     */
+    setSelectedPeriod(period: PeriodType): void {
       this.selectedPeriod = period;
     },
-    async fetchPosts() {
+    /**
+     * @fetchPosts
+     */
+    async fetchPosts(): Promise<void> {
       // fetching data
       const RESPONSE_URL: string = 'http://localhost:8000/posts';
       const response: Response = await window.fetch(RESPONSE_URL);
-      
+
       // casting `as Array<IPost>` for type safety
       const data = (await response.json()) as Array<IPost>;
       // simulating a delay
       await delaySimulation();
-      
+
       // processing our data
       let ids: Array<string> = [];
       let all: Map<string, IPost> = new Map();
@@ -58,16 +57,38 @@ export const usePostStore = defineStore('posts', {
       this.ids = ids;
       this.all = all;
     },
+    /**
+     * @createNewPost
+     * @param post
+     */
+    createNewPost(post: TimeLinePostType): Promise<Response> {
+      const payloadBody = JSON.stringify({
+        ...post,
+        created: post.created.toISO(),
+      });
+
+      // fetching data
+      return window.fetch('http://localhost:8000/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payloadBody,
+      });
+    },
   },
   // works similarly to a computed property.
   // So a new state based on an existing state
   getters: {
+    /**
+     * @filteredPosts
+     * @param state
+     */
     filteredPosts: (state): Array<TimeLinePostType> => {
       // mapping through the `ids` Array<string, IPost>
       return state.ids
         .map((id) => {
           const post = state.all.get(id);
 
+          // if true will return from this code block
           if (post) {
             return {
               ...post,
