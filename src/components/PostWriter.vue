@@ -1,9 +1,13 @@
 <!-- @PostWriter -->
 <script lang="ts" setup>
 import { TimeLinePostType } from '@/dummy_data/posts';
+import { usePostStore } from '@/stores/postStore';
+import { debounce } from 'lodash';
 import { marked } from 'marked';
-import { onMounted, ref /*watch*/, watchEffect } from 'vue';
+import { onMounted, ref, watch /*watchEffect*/ } from 'vue';
 import highlightjs from 'highlight.js';
+
+const postStore = usePostStore();
 
 const props = defineProps<{
   post: TimeLinePostType;
@@ -13,16 +17,16 @@ const { post } = props;
 const title = ref<string>(post.title);
 
 const contentMarkdown = ref<string>(post.markdown);
+// property used to interpolate our markup
+const htmlInterpolation = ref<string>('');
 // will be call to access the dom node: div
 const contentEditable = ref<HTMLDivElement>();
-// property used to interpolate our markup
-const htmlInterpolation = ref<string>();
 
-watchEffect(() => {
+function parseHTMLDebounce(markdown: string) {
   // using mark: a html parser package
   // marked.parse cannot be computed because it is asynchronous
   marked.parse(
-    contentMarkdown.value,
+    markdown,
     {
       gfm: true,
       breaks: true,
@@ -35,26 +39,29 @@ watchEffect(() => {
       htmlInterpolation.value = parsedResult;
     },
   );
-});
+}
 
-/*
-* watch will be called the very first time the component mounts
-* & the callback will also be called everytime contentMarkdown changes
-* --------------------------------------------------------------------
+// watch will be called the very first time the component mounts
+// & the callback will also be called everytime contentMarkdown changes
 watch(
- contentMarkdown,
- (newContentMarkdown) => {
- // using mark: a html parser package
- // marked.parse cannot be computed because it is asynchronous
- marked.parse(newContentMarkdown, (err, parsedResult) => {
- htmlInterpolation.value = parsedResult;
- });
- },
- { immediate: true },
- );
-* */
+  contentMarkdown,
+  debounce((newContentMarkdown) => {
+    parseHTMLDebounce(newContentMarkdown);
+  }, 250),
+  { immediate: true },
+);
 
-// lifecycle-hooks: must use before other functions
+function saveNewPost() {
+  const newPost: TimeLinePostType = {
+    ...post,
+    title: title.value,
+    markdown: contentMarkdown.value,
+    html: htmlInterpolation.value,
+  };
+
+  postStore.createNewPost(newPost);
+}
+
 onMounted(() => {
   // Helps with bugs when typing in text in the contentEditable
   if (!contentEditable.value) {
@@ -119,6 +126,18 @@ function handleInput() {
 
     <div class="column">
       <div v-html="htmlInterpolation" />
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <!-- SAVE POST -->
+      <button
+        class="button is-primary is-pulled-right"
+        @click="saveNewPost"
+      >
+        Save Post
+      </button>
     </div>
   </div>
 </template>

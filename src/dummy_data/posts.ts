@@ -6,6 +6,7 @@ export interface IPost {
   title: string;
   created: string;
   markdown: string;
+  html: string;
 }
 
 // extending post
@@ -19,6 +20,7 @@ export const today: IPost = {
   title: 'Today',
   created: DateTime.now().toISO(),
   markdown: '',
+  html: '',
 };
 
 export const thisWeek: IPost = {
@@ -26,6 +28,7 @@ export const thisWeek: IPost = {
   title: 'This Week',
   created: DateTime.now().minus({ days: 5 }).toISO(),
   markdown: '',
+  html: '',
 };
 
 export const thisMonth: IPost = {
@@ -33,4 +36,5 @@ export const thisMonth: IPost = {
   title: 'This Month',
   created: DateTime.now().minus({ weeks: 3 }).toISO(),
   markdown: '',
+  html: '',
 };

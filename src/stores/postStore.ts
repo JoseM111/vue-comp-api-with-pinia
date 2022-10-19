@@ -24,10 +24,17 @@ export const usePostStore = defineStore('posts', {
   }),
   // actions: to update the state
   actions: {
-    setSelectedPeriod(period: PeriodType) {
+    /**
+     * @fetchPosts
+     * @param period
+     */
+    setSelectedPeriod(period: PeriodType): void {
       this.selectedPeriod = period;
     },
-    async fetchPosts() {
+    /**
+     * @fetchPosts
+     */
+    async fetchPosts(): Promise<void> {
       // fetching data
       const RESPONSE_URL: string = 'http://localhost:8000/posts';
       const response: Response = await window.fetch(RESPONSE_URL);
@@ -50,10 +57,18 @@ export const usePostStore = defineStore('posts', {
       this.ids = ids;
       this.all = all;
     },
+    
+    createNewPost(post: TimeLinePostType) {
+      console.log("post created:", post);
+    },
   },
   // works similarly to a computed property.
   // So a new state based on an existing state
   getters: {
+    /**
+     * @filteredPosts
+     * @param state
+     */
     filteredPosts: (state): Array<TimeLinePostType> => {
       // mapping through the `ids` Array<string, IPost>
       return state.ids
