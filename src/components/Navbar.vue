@@ -1,5 +1,6 @@
 <!-- @Navbar -->
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+</script>
 
 <template>
   <div class="navbar">

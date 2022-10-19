@@ -1,7 +1,9 @@
 <!-- @PostWriter -->
 <script lang="ts" setup>
 import { TimeLinePostType } from '@/dummy_data/posts';
-import { onMounted, ref } from 'vue';
+import { marked } from 'marked';
+import { onMounted, ref /*watch*/, watchEffect } from 'vue';
+import highlightjs from 'highlight.js';
 
 const props = defineProps<{
   post: TimeLinePostType;
@@ -10,9 +12,47 @@ const props = defineProps<{
 const { post } = props;
 const title = ref<string>(post.title);
 
+const contentMarkdown = ref<string>(post.markdown);
 // will be call to access the dom node: div
 const contentEditable = ref<HTMLDivElement>();
-const contentMarkdown = ref(post.markdown);
+// property used to interpolate our markup
+const htmlInterpolation = ref<string>();
+
+watchEffect(() => {
+  // using mark: a html parser package
+  // marked.parse cannot be computed because it is asynchronous
+  marked.parse(
+    contentMarkdown.value,
+    {
+      gfm: true,
+      breaks: true,
+      // will be called when syntax highlighting in markdown
+      highlight: (code) => {
+        return highlightjs.highlightAuto(code).value;
+      },
+    },
+    (err, parsedResult) => {
+      htmlInterpolation.value = parsedResult;
+    },
+  );
+});
+
+/*
+* watch will be called the very first time the component mounts
+* & the callback will also be called everytime contentMarkdown changes
+* --------------------------------------------------------------------
+watch(
+ contentMarkdown,
+ (newContentMarkdown) => {
+ // using mark: a html parser package
+ // marked.parse cannot be computed because it is asynchronous
+ marked.parse(newContentMarkdown, (err, parsedResult) => {
+ htmlInterpolation.value = parsedResult;
+ });
+ },
+ { immediate: true },
+ );
+* */
 
 // lifecycle-hooks: must use before other functions
 onMounted(() => {
@@ -77,7 +117,9 @@ function handleInput() {
       />
     </div>
 
-    <div class="column">{{ contentMarkdown }}</div>
+    <div class="column">
+      <div v-html="htmlInterpolation" />
+    </div>
   </div>
 </template>
 

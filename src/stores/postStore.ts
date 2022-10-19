@@ -59,7 +59,8 @@ export const usePostStore = defineStore('posts', {
       return state.ids
         .map((id) => {
           const post = state.all.get(id);
-
+          
+          // if true will return from this code block
           if (post) {
             return {
               ...post,

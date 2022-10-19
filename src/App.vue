@@ -15,3 +15,20 @@ import Navbar from '@/components/Navbar.vue';
     </div>
   </div>
 </template>
+
+<style>
+@import "highlight.js/styles/atom-one-dark.css";
+
+ul {
+  list-style: revert !important;
+  margin: 10px 0 !important;
+}
+
+pre {
+  margin: 10px 0 !important;
+}
+
+p {
+  margin: 10px 0 !important;
+}
+</style>
