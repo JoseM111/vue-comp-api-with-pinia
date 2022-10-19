@@ -57,9 +57,22 @@ export const usePostStore = defineStore('posts', {
       this.ids = ids;
       this.all = all;
     },
-    
-    createNewPost(post: TimeLinePostType) {
-      console.log("post created:", post);
+    /**
+     * @createNewPost
+     * @param post
+     */
+    createNewPost(post: TimeLinePostType): Promise<Response> {
+      const payloadBody = JSON.stringify({
+        ...post,
+        created: post.created.toISO(),
+      });
+
+      // fetching data
+      return window.fetch('http://localhost:8000/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payloadBody,
+      });
     },
   },
   // works similarly to a computed property.
@@ -74,7 +87,7 @@ export const usePostStore = defineStore('posts', {
       return state.ids
         .map((id) => {
           const post = state.all.get(id);
-          
+
           // if true will return from this code block
           if (post) {
             return {

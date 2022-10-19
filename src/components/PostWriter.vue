@@ -6,8 +6,10 @@ import { debounce } from 'lodash';
 import { marked } from 'marked';
 import { onMounted, ref, watch /*watchEffect*/ } from 'vue';
 import highlightjs from 'highlight.js';
+import { useRouter } from 'vue-router';
 
 const postStore = usePostStore();
+const router = useRouter();
 
 const props = defineProps<{
   post: TimeLinePostType;
@@ -51,7 +53,7 @@ watch(
   { immediate: true },
 );
 
-function saveNewPost() {
+async function saveNewPost() {
   const newPost: TimeLinePostType = {
     ...post,
     title: title.value,
@@ -59,7 +61,10 @@ function saveNewPost() {
     html: htmlInterpolation.value,
   };
 
-  postStore.createNewPost(newPost);
+  await postStore.createNewPost(newPost);
+  // using vue's `useRouter` to reroute
+  // to the home page once we save a new post
+  await router.push('/');
 }
 
 onMounted(() => {
